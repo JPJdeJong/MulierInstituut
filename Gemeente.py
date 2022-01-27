@@ -6,7 +6,7 @@ import numpy as np
 
 # check of cbs code uit 6 tekens betsaat en met GEM begint, en dan 3 cijfers.
 
-# Input /Create
+# Input /Created
 #{“naam”: “Mijn gemeete”, “cbscode”: “GEM001”, “plaatsen”: [“WPL001”, “WPL002”]}
 class Gemeente:
     def check_gemeente (gemeente_data: dict):
