@@ -4,6 +4,14 @@ class Gemeente:
     # eigenschappen: naam, cbscode, plaatsen, inwonersaantal
 
     def check_gemeente(gemeente_data: dict):
+        """
+        Args:
+            gemeente_data: dict, the dictionary with the data that needs to be inserted into the database.
+
+        Returns:
+            gemeente or {}, dict, if the cbscode is invalid, an empty dictionary will be returned.
+                        Else the data for the 'gemeente/ cbscode' will be returned.
+        """
         # check of cbs code uit 6 tekens betsaat en met GEM begint, en dan 3 cijfers.
         gemeente = gemeente_data.copy()
         naam = gemeente.get('naam')
@@ -30,6 +38,12 @@ class Gemeente:
             return {}
 
     def create_db(db_name: str):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+        Returns:
+            db: a created sqlite database.
+        """
         db = sqlite3.connect(f'{db_name}.db')
         cur = db.cursor()
         try:
@@ -47,6 +61,14 @@ class Gemeente:
         return db
 
     def create(db_name: str, data_gemeente: dict):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            data_gemeente: dict, a input_dict as given with the input that matches the columns of the database.
+            Not necessarily in the order
+        Returns:
+            db: The database with the inserted record.
+        """
         data = data_gemeente.copy()
         data = Gemeente.check_gemeente(data)
         naam = data.get('naam')
@@ -70,11 +92,26 @@ class Gemeente:
         return db
 
     def create_many(db_name: str ,data_gemeente: list[dict]):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            data_gemeente: list of dict, a list of input_dictionaries as given with the input that matches the columns of the database.
+            The list can come form a json file containing a list of dictionaries. The columns do not have to follow the order of the database
+        Returns:
+            db: The database with the inserted records.
+        """
         data_gemeente_new = data_gemeente.copy()
         for item in data_gemeente_new:
             create_one = Gemeente.create(db_name, item)
 
     def read(db_name: str, cbs_code: str):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            cbs_code: a string of the cbscode that you want to read/ retrieve
+        Returns:
+            record: The desired record from the database.
+        """
         db = sqlite3.connect(f'{db_name}.db')
         sql = f"SELECT * from {db_name} where cbscode = '{cbs_code}';"
         cur = db.cursor()
@@ -88,8 +125,14 @@ class Gemeente:
         return record
 
     def read_all(db_name: str):
+        """
+         Args:
+             db_name: str, a string with the name of the db.
+         Returns:
+             cbs_codes: The whole database based on the cbscodes.
+         """
         db = sqlite3.connect(f'{db_name}.db')
-        sql = f"SELECT cbscode from {db_name};"
+        sql = f"SELECT * from {db_name};"
         cur = db.cursor()
         cur.execute(sql)
 
@@ -98,11 +141,21 @@ class Gemeente:
             print(rec)
         return cbs_codes
 
-    def update(db_name: str, update_gemeente: dict, new_cbs_code: str, new_name: None):
+    def update(db_name: str, update_gemeente: dict, new_cbs_code: str, new_name: str = ''):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            update_gemeente: dict, a dictionary with the data that should be inserted/ updated.
+            new_cbs_code: str, the cbscode which needs to be updated.
+            new_name: str, the new name of the 'gemeente' if that needs to be changed (in case of a fusie)
+        Returns:
+            db: The updated database.
+        """
+
         data = update_gemeente.copy()
         data = Gemeente.check_gemeente(data)
 
-        if new_name != None:
+        if new_name != '':
             naam = new_name
         else:
             naam = data.get('naam')
@@ -136,6 +189,13 @@ class Gemeente:
         return db
 
     def delete(db_name: str, cbs_code: str):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            cbs_code: str, the cbs_code that needs to be deleted
+        Returns:
+            db: the database without the deleted records
+        """
         cbs_delete = cbs_code
         db = sqlite3.connect(f'{db_name}.db')
         qry = f"DELETE from {db_name} where cbscode='cbs_delete' ;"
@@ -149,21 +209,6 @@ class Gemeente:
             db.rollback()
         db.close()
         return db
-
-    def delete(db_name: str, cbs_code: str):
-        cbs_delete =cbs_code
-        print(cbs_delete)
-        db = sqlite3.connect(f'{db_name}.db')
-        qry = f"DELETE from {db_name} where cbscode='cbs_delete' ;"
-        try:
-            cur = db.cursor()
-            cur.execute(qry)
-            db.commit()
-            print(f"Record deleted successfully {cbs_code}")
-        except:
-            print("error in operation")
-            db.rollback()
-        db.close()
 
 
 class Plaatsen:
@@ -195,6 +240,12 @@ class Plaatsen:
             return {}
 
     def create_db(db_name: str):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+        Returns:
+            db: a created sqlite database.
+        """
         db = sqlite3.connect(f'{db_name}.db')
         cur = db.cursor()
         try:
@@ -212,6 +263,14 @@ class Plaatsen:
         return db
 
     def create(db_name: str, data_plaats: dict):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            data_gemeente: dict, a input_dict as given with the input that matches the columns of the database.
+            Not necessarily in the order
+        Returns:
+            db: The database with the inserted record.
+        """
         data = data_plaats.copy()
         data = Plaatsen.check_plaats(data)
 
@@ -235,11 +294,27 @@ class Plaatsen:
         return db
 
     def create_many(db_name: str ,data_gemeente: list[dict]):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            data_gemeente: list of dict, a list of input_dictionaries as given with the input that matches the columns of the database.
+                            The list can come form a json file containing a list of dictionaries.
+                            The columns do not have to follow the order of the database
+        Returns:
+            db: The database with the inserted records.
+        """
         data_gemeente_new = data_gemeente.copy()
         for item in data_gemeente_new:
             create_one = Plaatsen.create(db_name, item)
 
     def read(db_name: str, cbs_code: str):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            cbs_code: a string of the cbscode that you want to read/ retrieve
+        Returns:
+            record: The desired record from the database.
+        """
         db = sqlite3.connect(f'{db_name}.db')
         sql = f"SELECT * from {db_name} where cbscode = '{cbs_code}';"
         cur = db.cursor()
@@ -253,6 +328,13 @@ class Plaatsen:
         return record
 
     def read_all(db_name: str):
+        """
+         Args:
+             db_name: str, a string with the name of the db.
+         Returns:
+             cbs_codes: The whole database based on the cbscodes.
+         """
+
         db = sqlite3.connect(f'{db_name}.db')
         sql = f"SELECT cbscode from {db_name};"
         cur = db.cursor()
@@ -263,20 +345,34 @@ class Plaatsen:
             print(rec)
         return cbs_codes
 
-    def update(db_name: str, update_plaats: dict):
-        data = update_plaats.copy()
+    def update(db_name: str, update_gemeente: dict, new_cbs_code: str, new_name: str = ''):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            update_gemeente: dict, a dictionary with the data that should be inserted/ updated.
+            new_cbs_code: str, the cbscode which needs to be updated.
+            new_name: str, the new name of the 'gemeente' if that needs to be changed (in case of a fusie)
+        Returns:
+            db: The updated database.
+        """
+
+        data = update_gemeente.copy()
         data = Plaatsen.check_plaats(data)
-        naam = data.get('naam')
+
+        if new_name != '':
+            naam = new_name
+        else:
+            naam = data.get('naam')
         gemeente = data.get('gemeente')
         gemeente = str(gemeente)
         cbscode = data.get('cbscode')
         inwonersaantal = data.get('inwonersaantal')
 
         db = sqlite3.connect(f'{db_name}.db')
-        qry = f"update {db_name} set naam=?, gemeente=?, inwonersaantal=? where cbscode=?;"
+        qry = f"update {db_name} set cbscode = ?, naam=?, gemeente=?, inwonersaantal=? where cbscode=?;"
         try:
             cur = db.cursor()
-            cur.execute(qry, (naam, gemeente, inwonersaantal, cbscode))
+            cur.execute(qry, (new_cbs_code, naam, gemeente, inwonersaantal, cbscode))
             db.commit()
             print("record updated successfully")
         except:
@@ -285,6 +381,14 @@ class Plaatsen:
         db.close()
 
     def delete(db_name: str, cbs_code: str):
+        """
+        Args:
+            db_name: str, a string with the name of the db.
+            cbs_code: str, the cbs_code that needs to be deleted
+        Returns:
+            db: the database without the deleted records
+        """
+
         cbs_delete = cbs_code
         print(cbs_delete)
         db = sqlite3.connect(f'{db_name}.db')
