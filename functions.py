@@ -336,7 +336,7 @@ class Plaatsen:
          """
 
         db = sqlite3.connect(f'{db_name}.db')
-        sql = f"SELECT cbscode from {db_name};"
+        sql = f"SELECT * from {db_name};"
         cur = db.cursor()
         cur.execute(sql)
 
