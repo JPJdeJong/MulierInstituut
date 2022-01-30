@@ -1,12 +1,13 @@
 import sqlite3
 from functions import *
-
+from create_db import *
 if __name__ == '__main__':
     name_db = 'MI_gem'
 
     df_tst = {"naam": "Gemeente 1", "cbscode": "GEM001", "plaatsen": ["WPL001"], "inwonersaantal": 100}
 
-    cr_db = Gemeente.create_db(name_db)
+    cr_db = Create.create_db_gemeente(name_db)
+
     ins_rec = Gemeente.create(name_db, df_tst)
     ins_many = Gemeente.create_many(name_db, [{"naam": "Gemeente 1a", "cbscode": "GEM011", "plaatsen": ["WPL011"], "inwonersaantal": 125},
                      {"naam": "Gemeente 2a", "cbscode": "GEM012", "plaatsen": "WPL012", "inwonersaantal": 1509},

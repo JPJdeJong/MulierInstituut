@@ -37,29 +37,6 @@ class Gemeente:
             print(f'Invalid CBS Code, code is geen gemeente {cbscode}, this code will not be created')
             return {}
 
-    def create_db(db_name: str):
-        """
-        Args:
-            db_name: str, a string with the name of the db.
-        Returns:
-            db: a created sqlite database.
-        """
-        db = sqlite3.connect(f'{db_name}.db')
-        cur = db.cursor()
-        try:
-            #create DB
-            cur.execute(f'''CREATE TABLE IF NOT EXISTS {db_name} (
-            cbscode text PRIMARY KEY,
-            naam text NOT NULL,
-            plaatsen text,
-            inwonersaantal INTEGER);''')
-            print(f'Succesfully created database: {db_name}')
-        except:
-            print('error in operation, no database created.')
-            db.rollback()
-        db.close()
-        return db
-
     def create(db_name: str, data_gemeente: dict):
         """
         Args:
@@ -239,29 +216,6 @@ class Plaatsen:
             print(f'Invalid CBS Code, code is geen gemeente {cbscode}, this code will not be created')
             return {}
 
-    def create_db(db_name: str):
-        """
-        Args:
-            db_name: str, a string with the name of the db.
-        Returns:
-            db: a created sqlite database.
-        """
-        db = sqlite3.connect(f'{db_name}.db')
-        cur = db.cursor()
-        try:
-            #create DB
-            cur.execute(f'''CREATE TABLE {db_name} (
-            cbscode text PRIMARY KEY,
-            naam text NOT NULL,
-            gemeente text,
-            inwonersaantal INTEGER);''')
-            print(f'Succesfully created database: {db_name}')
-        except:
-            print('error in operation, no database created.')
-            db.rollback()
-        db.close()
-        return db
-
     def create(db_name: str, data_plaats: dict):
         """
         Args:
@@ -319,8 +273,8 @@ class Plaatsen:
         sql = f"SELECT * from {db_name} where cbscode = '{cbs_code}';"
         cur = db.cursor()
         cur.execute(sql)
+        record = cur.fetchone()
         while True:
-            record = cur.fetchone()
             if record == None:
                 break
             print(record)
